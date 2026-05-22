@@ -274,18 +274,3 @@ Contains realistic network traffic with benign and attack scenarios including Do
 Developed for academic and research purposes.
  
 ---
----
----
- 
-# ANTIGRAVITY BUILD GUIDE
-## Step-by-Step Prompts + Commands to Build A.I.R.S
- 
----
- 
-## HOW TO USE THIS GUIDE
- 
-Run each prompt **in order** in AntiGravity. Each prompt builds on the last.  
-After each AntiGravity generation, run the **verification command** before moving to the next prompt.  
-Do NOT skip steps — later prompts reference files created in earlier ones.
- 
----
