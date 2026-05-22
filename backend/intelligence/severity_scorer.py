@@ -58,12 +58,24 @@ _THRESHOLDS = [
     (0.0,  "LOW"),
 ]
 
-# Level color codes (for frontend badge rendering)
+# Level colors (for frontend badge rendering)
 LEVEL_COLORS = {
     "CRITICAL": "#ef4444",
     "HIGH":     "#f97316",
     "MEDIUM":   "#f59e0b",
     "LOW":      "#3b82f6",
+}
+
+# Recommended actions per attack type
+_RECOMMENDED_ACTIONS: Dict[str, str] = {
+    "dos":         "Block source IP immediately + Apply rate limiting on target endpoint",
+    "ddos":        "Block source IP range + Engage upstream ISP for traffic scrubbing",
+    "port_scan":   "Block source IP + Audit exposed services + Enable honeypot alerts",
+    "brute_force": "Block source IP + Trigger account lockout + Audit recent logins",
+    "suspicious":  "Flag for enhanced monitoring + Correlate with threat intelligence",
+    "blocklist":   "Block at perimeter + Investigate if internal hosts contacted this IP",
+    "bot":         "Block source IP + Investigate botnet C2 infrastructure + Check internal hosts",
+    "normal":      "No action required — continue baseline monitoring",
 }
 
 
@@ -168,6 +180,7 @@ class SeverityScorer:
             "score": final_score,
             "color": LEVEL_COLORS.get(level, "#94a3b8"),
             "factors": factors,
+            "recommended_action": _RECOMMENDED_ACTIONS.get(attack_type.lower(), "Investigate and monitor activity"),
         }
 
     def level_from_score(self, score: float) -> str:

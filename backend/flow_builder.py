@@ -145,6 +145,7 @@ class FlowBuilder:
     def __init__(self, flow_timeout: float = 30.0):
         self.flows: Dict[tuple, NetworkFlow] = {}
         self.completed_flows: List[NetworkFlow] = []
+        self._MAX_COMPLETED = 1000  # cap to prevent unbounded memory growth
         self.flow_timeout = flow_timeout
         self._total_flows_created = 0
 
@@ -193,6 +194,9 @@ class FlowBuilder:
             if now - flow.last_seen > self.flow_timeout:
                 expired.append(flow)
                 self.completed_flows.append(flow)
+                # Trim oldest entries to stay within memory cap
+                if len(self.completed_flows) > self._MAX_COMPLETED:
+                    self.completed_flows = self.completed_flows[-self._MAX_COMPLETED:]
                 del self.flows[key]
 
         return expired

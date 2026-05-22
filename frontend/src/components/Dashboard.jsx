@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Shield, Activity, AlertTriangle, Zap, Server, Wifi } from 'lucide-react';
-import { fetchTraffic, fetchSystemStatus, runSimulation, wsManager } from '../services/api';
+import { fetchTraffic, fetchSystemStatus, runSimulationOneShot, wsManager } from '../services/api';
 
 const statConfig = [
   { key: 'packets', label: 'Packets Captured', icon: Activity, color: 'blue', format: (v) => v.toLocaleString() },
@@ -76,7 +76,7 @@ export default function Dashboard() {
   const handleSimulate = async (type) => {
     setSimulating(type);
     try {
-      await runSimulation(type);
+      await runSimulationOneShot(type);
       setTimeout(refreshStats, 2000);
     } catch (e) {
       console.error('Simulation error:', e);

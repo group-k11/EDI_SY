@@ -10,8 +10,12 @@ import os
 from contextlib import asynccontextmanager
 from datetime import datetime
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Load .env file before anything else accesses os.getenv()
+load_dotenv()
 
 # Ensure backend directory is in path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -122,25 +126,22 @@ async def processing_loop():
 
 
 async def auto_simulation_loop():
-    """Generate periodic demo traffic for visualization."""
-    from attack_simulator import simulate_mixed_traffic, simulate_port_scan, simulate_ddos, simulate_bruteforce
+    """Generate periodic demo traffic for visualization using the simulator module."""
+    from simulator.attack_simulator import generate_flow, ATTACK_PROFILES
     print("[*] Starting auto-simulation loop for demo traffic...")
-    
-    attack_types = [simulate_mixed_traffic, simulate_port_scan, simulate_ddos, simulate_bruteforce]
+
+    attack_types = list(ATTACK_PROFILES.keys())  # ddos, port_scan, brute_force, suspicious, benign
     cycle = 0
 
     while _running:
         try:
-            # Rotate through different attack types for variety
-            attack_func = attack_types[cycle % len(attack_types)]
-            num_packets = 50 if cycle % 4 == 0 else 30  # Vary packet count
-            
-            packets = attack_func(num_packets=num_packets)
-            for pkt in packets:
-                packet_capture.inject_packet(pkt)
-            
+            attack_type = attack_types[cycle % len(attack_types)]
+            # Generate synthetic flow dict and inject as a packet-like structure
+            flow = generate_flow(attack_type)
+            # Inject as a synthetic packet dict that packet_capture can handle
+            packet_capture.inject_packet(flow)
             cycle += 1
-            print(f"[+] Auto-simulation: Generated {len(packets)} packets ({attack_func.__name__})")
+            print(f"[+] Auto-simulation: Injected {attack_type} flow")
         except Exception as e:
             print(f"[!] Simulation loop error: {e}")
 
@@ -232,11 +233,18 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS
+# CORS — explicit origins required when allow_credentials=True (wildcard+credentials is invalid per spec)
+_CORS_ORIGINS = [
+    "http://localhost:5173",   # Vite dev server
+    "http://localhost:5174",
+    "http://localhost:8000",   # FastAPI itself (for Swagger UI)
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_CORS_ORIGINS,
+    allow_credentials=False,  # Set True only if using cookies/sessions
     allow_methods=["*"],
     allow_headers=["*"],
 )

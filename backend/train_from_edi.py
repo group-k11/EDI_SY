@@ -17,7 +17,13 @@ Run from the backend directory:
     python train_from_edi.py
 """
 
-import os, sys, glob, warnings, time
+import os
+import sys
+import argparse
+import glob
+import warnings
+import time
+from collections import defaultdict
 import numpy as np
 import pandas as pd
 
@@ -25,7 +31,22 @@ warnings.filterwarnings("ignore")
 
 # ── Ensure imports from this backend folder work ────────────────────────────
 BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
-EDI_DATASET = r"C:\Users\sujit\Downloads\EDI_SY\EDI_Dataset"
+
+def get_data_dir() -> str:
+    """Resolve dataset path from CLI arg, env var, or prompt."""
+    parser = argparse.ArgumentParser(description="Train A.I.R.S models from EDI dataset")
+    parser.add_argument("--data-dir", type=str, default=None,
+                        help="Path to EDI_Dataset directory containing parquet files")
+    args, _ = parser.parse_known_args()
+    if args.data_dir:
+        return args.data_dir
+    env_path = os.getenv("EDI_DATASET_PATH")
+    if env_path:
+        return env_path
+    # Final fallback: current directory
+    return os.path.join(os.path.dirname(__file__), "data")
+
+DATA_DIR = get_data_dir()
 
 sys.path.insert(0, BACKEND_DIR)
 
@@ -191,7 +212,7 @@ def main():
     # 5. Train via the engine's internal method
     print("\n[Train] Initialising MLEngine and training all models...")
     engine = MLEngine.__new__(MLEngine)          # skip __init__ / auto-train
-    engine.ip_sequence_buffer = {}
+    engine.ip_sequence_buffer = defaultdict(list)
     engine.sequence_length = 5
     engine.is_trained = False
     engine.scaler = None

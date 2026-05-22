@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { ShieldAlert, AlertTriangle, Clock } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, Clock, ExternalLink } from 'lucide-react';
 import { fetchThreats, wsManager } from '../services/api';
+import ThreatDetail from './ThreatDetail';
 
 const severityConfig = {
   critical: { class: 'badge-critical', icon: '🔴', priority: 0 },
@@ -17,6 +18,18 @@ const attackIcons = {
 export default function ThreatPanel() {
   const [threats, setThreats] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedThreat, setSelectedThreat] = useState(null);
+
+  // Dedup helper — prevents same threat being added multiple times via WS
+  const dedup = (list) => {
+    const seen = new Set();
+    return list.filter(t => {
+      const key = `${t.source_ip}|${t.attack_type}|${t.timestamp}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -33,10 +46,10 @@ export default function ThreatPanel() {
 
     const unsub = wsManager.subscribe('threats', (data) => {
       if (data.type === 'threat_alert' && data.threats) {
-        setThreats(prev => [...data.threats, ...prev].slice(0, 50));
+        setThreats(prev => dedup([...data.threats, ...prev]).slice(0, 50));
       }
       if (data.type === 'update' && data.threats) {
-        setThreats(data.threats);
+        setThreats(dedup(data.threats));
       }
     });
 
@@ -103,15 +116,26 @@ export default function ThreatPanel() {
           </div>
         ) : (
           sorted.map((threat, i) => {
+            const key = `${threat.source_ip}|${threat.attack_type}|${threat.timestamp}|${i}`;
             const sev = severityConfig[threat.severity] || severityConfig.info;
             return (
-              <div key={i} className="threat-item" style={{
-                padding: '0.85rem',
-                borderBottom: '1px solid var(--border-color)',
-                borderLeft: `3px solid var(--severity-${threat.severity})`,
-                marginBottom: '0.25rem',
-                borderRadius: '4px',
-              }}>
+              <div
+                key={key}
+                className="threat-item"
+                onClick={() => setSelectedThreat(threat)}
+                title="Click for SHAP, MITRE, and LLM analysis"
+                style={{
+                  padding: '0.85rem',
+                  borderBottom: '1px solid var(--border-color)',
+                  borderLeft: `3px solid var(--severity-${threat.severity})`,
+                  marginBottom: '0.25rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span>{attackIcons[threat.attack_type] || '❓'}</span>
@@ -136,28 +160,38 @@ export default function ThreatPanel() {
                     <span style={{ fontFamily: 'monospace', color: 'var(--accent-cyan)' }}>{threat.target_ip}</span>
                   </span>
                 </div>
-                {/* Confidence Bar */}
                 <div style={{ marginTop: '0.5rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginBottom: '0.2rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>ML Confidence (varies by detection strength)</span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{(threat.confidence * 100).toFixed(1)}%</span>
+                    <span style={{ color: 'var(--text-muted)' }}>ML Confidence</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{((threat.confidence || 0) * 100).toFixed(1)}%</span>
                   </div>
                   <div className="confidence-bar">
                     <div className="confidence-fill" style={{
-                      width: `${threat.confidence * 100}%`,
-                      background: threat.confidence > 0.8
+                      width: `${(threat.confidence || 0) * 100}%`,
+                      background: (threat.confidence || 0) > 0.8
                         ? 'linear-gradient(90deg, var(--accent-red), #f87171)'
-                        : threat.confidence > 0.6
+                        : (threat.confidence || 0) > 0.6
                           ? 'linear-gradient(90deg, var(--accent-orange), #fbbf24)'
                           : 'linear-gradient(90deg, var(--accent-blue), var(--accent-cyan))',
                     }} />
                   </div>
+                </div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', marginTop: '0.4rem', opacity: 0.7 }}>
+                  Click for SHAP • MITRE • AI Analysis <ExternalLink size={10} style={{ display: 'inline', verticalAlign: 'middle' }} />
                 </div>
               </div>
             );
           })
         )}
       </div>
+
+      {/* Threat Detail Modal */}
+      {selectedThreat && (
+        <ThreatDetail
+          threat={selectedThreat}
+          onClose={() => setSelectedThreat(null)}
+        />
+      )}
     </div>
   );
 }

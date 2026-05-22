@@ -49,6 +49,9 @@ class FeatureEngine:
             self.ip_targets[src].add(flow.dst_ip)
             for pkt in flow.packets:
                 self.ip_packet_sizes[src].append(pkt.get("packet_length", 0))
+                # Cap per-IP packet size history to prevent unbounded growth
+                if len(self.ip_packet_sizes[src]) > 1000:
+                    self.ip_packet_sizes[src] = self.ip_packet_sizes[src][-1000:]
 
     def _is_internal(self, ip_str: str) -> bool:
         """Check if an IP address belongs to the internal network."""

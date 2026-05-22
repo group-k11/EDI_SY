@@ -26,7 +26,6 @@ from database import (
     insert_threat,
     list_ip_list,
 )
-from attack_simulator import SIMULATION_MAP
 
 router = APIRouter(prefix="/api")
 
@@ -372,7 +371,9 @@ async def explain_features(payload: Dict = Body(...)):
         if model:
             result = get_shap_explanation(model, arr, ML_FEATURE_COLUMNS)
         else:
-            result = _synthetic_shap({col: v for col, v in zip(ML_FEATURE_COLUMNS, values)})
+            features_dict = {col: v for col, v in zip(ML_FEATURE_COLUMNS, values)}
+            # Pass a default prediction type so synthetic SHAP weights are meaningful
+            result = _synthetic_shap(features_dict, "dos")
 
         return {"shap_features": result, "count": len(result)}
     except Exception as e:

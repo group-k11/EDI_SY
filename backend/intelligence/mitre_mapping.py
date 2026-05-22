@@ -181,6 +181,35 @@ _TECHNIQUE_DB: Dict[str, Dict] = {
             "Investigate if any internal hosts contacted this IP",
         ],
     },
+
+    "bot": {
+        "technique_id": "T1071",
+        "technique_name": "Application Layer Protocol",
+        "tactic": "Command and Control",
+        "tactic_id": "TA0011",
+        "sub_technique_id": "T1071.001",
+        "sub_technique_name": "Web Protocols",
+        "description": (
+            "Traffic consistent with botnet C2 communication using standard application "
+            "layer protocols (HTTP/HTTPS/DNS) to blend with legitimate traffic. "
+            "The endpoint may be part of a compromised botnet receiving commands."
+        ),
+        "reference_url": "https://attack.mitre.org/techniques/T1071",
+        "severity_weight": 1.3,
+        "indicators": [
+            "Periodic beaconing pattern at regular intervals",
+            "Unusual outbound connections to external IPs",
+            "Application protocol on non-standard ports",
+            "Low-entropy communication (possibly encoded C2 commands)",
+        ],
+        "typical_targets": ["Compromised hosts", "Internal workstations", "IoT devices"],
+        "countermeasures": [
+            "Block source/destination IP immediately",
+            "Investigate botnet C2 infrastructure",
+            "Check all internal hosts that may have communicated with this IP",
+            "Scan compromised hosts for malware",
+        ],
+    },
 }
 
 # Fallback for unknown attack types
