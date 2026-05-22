@@ -1,225 +1,291 @@
-# AI-Based Network Intrusion Detection System Using Machine Learning
-
-This project implements an **AI-powered Network Intrusion Detection System (NIDS)** that uses machine learning models to analyze network traffic and detect malicious activities such as **DDoS attacks, Port Scans, and Bot traffic**.
-
-The system combines a **Python Flask backend for machine learning inference** with a **React + Vite frontend dashboard** that visualizes network statistics and detected threats in real time.
-
+# A.I.R.S — Autonomous Intelligent Response System
+### AI-Based Network Intrusion Detection with LLM Analysis, Explainability & Threat Intelligence
+ 
 ---
-
-# System Overview
-
-The system follows a multi-stage pipeline:
-
-1. Network traffic data collection
-2. Data preprocessing and feature extraction
-3. Machine learning model inference
-4. Attack classification
-5. Real-time visualization on a dashboard
-
-The backend processes traffic data and predicts attack types, while the frontend provides a monitoring interface for network activity and threat alerts.
-
+ 
+## What This Project Does
+ 
+A.I.R.S is a next-generation Network Intrusion Detection System that goes beyond simple attack classification. It detects malicious network traffic, **explains its reasoning** using SHAP, **analyzes threats in natural language** using an LLM, maps attacks to the **MITRE ATT&CK framework**, scores **threat severity**, and lets you run **live attack simulations** — all from a real-time dashboard.
+ 
+> "It doesn't just detect attacks. It understands them."
+ 
 ---
-
-# Features
-
-### Machine Learning-Based Detection
-
-Uses trained models to classify network traffic as **benign or malicious**.
-
-Supported attack types include:
-
-* DDoS
-* PortScan
-* Bot traffic
-* Brute Force attempts
-
-### Real-Time Dashboard
-
-A modern React dashboard displaying:
-
-* Network traffic statistics
-* Model predictions
-* Attack distribution charts
-* Activity logs
-
-### REST API
-
-A Flask backend exposes API endpoints for:
-
-* model predictions
-* attack statistics
-* visualization data
-
+ 
+## Innovation Over Standard NIDS
+ 
+| Feature | Standard NIDS | A.I.R.S |
+|---|---|---|
+| Attack Detection | ✅ | ✅ |
+| Model Explainability (SHAP) | ❌ | ✅ |
+| LLM Threat Analysis | ❌ | ✅ |
+| MITRE ATT&CK Mapping | ❌ | ✅ |
+| Threat Severity Scoring | ❌ | ✅ |
+| Response Recommendations | ❌ | ✅ |
+| Live Attack Simulator | ❌ | ✅ |
+ 
 ---
-
-# Machine Learning Models Used
-
-The system uses two types of machine learning approaches:
-
-### Isolation Forest
-
-Used for **anomaly detection** to identify unusual traffic patterns.
-
-### Random Forest
-
-Used for **classification of attack types** based on extracted traffic features.
-
-Both models are trained using network traffic datasets and integrated into the backend for inference.
-
----
-
-# Dataset Used
-
-The models are trained using the **CICIDS2017 dataset**, which contains realistic network traffic including both normal activity and multiple cyber attack scenarios.
-
----
-
-# Tech Stack
-
-### Backend
-
-* Python
-* Flask
-* Scikit-learn
-* Pandas
-* NumPy
-* SQLite
-
-### Frontend
-
-* React
-* Vite
-* Chart libraries for visualization
-
----
-
-# Project Structure
-
+ 
+## System Architecture
+ 
 ```
-project-root
+Network Traffic / Simulated Flows
+          │
+          ▼
+  ┌─────────────────┐
+  │  Flask Backend  │
+  │                 │
+  │  ┌───────────┐  │
+  │  │ Isolation │  │  ← Anomaly Detection
+  │  │  Forest   │  │
+  │  └───────────┘  │
+  │  ┌───────────┐  │
+  │  │  Random   │  │  ← Attack Classification
+  │  │  Forest   │  │
+  │  └───────────┘  │
+  │  ┌───────────┐  │
+  │  │   SHAP    │  │  ← Feature Explainability
+  │  │ Explainer │  │
+  │  └───────────┘  │
+  │  ┌───────────┐  │
+  │  │   LLM     │  │  ← Natural Language Threat Report
+  │  │ Analyst   │  │
+  │  └───────────┘  │
+  │  ┌───────────┐  │
+  │  │  MITRE +  │  │  ← Severity + Response Suggestion
+  │  │ Severity  │  │
+  │  └───────────┘  │
+  └─────────────────┘
+          │
+          ▼
+  ┌─────────────────┐
+  │ React Dashboard │
+  │                 │
+  │  Live Alerts    │
+  │  SHAP Charts    │
+  │  Threat Feed    │
+  │  Sim Controls   │
+  └─────────────────┘
+```
+ 
+---
+ 
+## Tech Stack
+ 
+**Backend**
+- Python 3.8+
+- Flask
+- Scikit-learn (Random Forest + Isolation Forest)
+- SHAP (model explainability)
+- Anthropic Claude API (LLM threat analysis)
+- Pandas, NumPy
+- SQLite
+**Frontend**
+- React + Vite
+- Recharts (data visualization)
+- Axios (API calls)
+**Dataset**
+- CICIDS2017 (Canadian Institute for Cybersecurity)
+---
+ 
+## Project Structure
+ 
+```
+AIRS/
 │
 ├── backend/
-│   ├── main.py
+│   ├── main.py                  # Flask app entry point
 │   ├── models/
+│   │   ├── random_forest.joblib
+│   │   └── isolation_forest.joblib
+│   ├── explainer/
+│   │   └── shap_explainer.py    # SHAP integration
+│   ├── analyst/
+│   │   └── llm_analyst.py       # Claude API threat analysis
+│   ├── intelligence/
+│   │   ├── mitre_mapping.py     # MITRE ATT&CK mapping
+│   │   └── severity_scorer.py   # Threat severity engine
+│   ├── simulator/
+│   │   └── attack_simulator.py  # Live attack replay script
 │   ├── database/
+│   │   └── db.py
 │   └── requirements.txt
 │
 ├── frontend/
 │   ├── src/
-│   ├── components/
+│   │   ├── App.jsx
+│   │   ├── components/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── AlertFeed.jsx        # Live alert panel
+│   │   │   ├── ShapChart.jsx        # SHAP feature chart
+│   │   │   ├── ThreatReport.jsx     # LLM analysis display
+│   │   │   ├── SeverityBadge.jsx    # LOW/MED/HIGH/CRITICAL
+│   │   │   ├── MitreBadge.jsx       # ATT&CK technique ID
+│   │   │   ├── SimulatorPanel.jsx   # Attack sim controls
+│   │   │   └── StatsPanel.jsx       # Network statistics
+│   │   └── api/
+│   │       └── client.js
+│   ├── package.json
 │   └── vite.config.js
 │
 ├── MachineLearningCSV/
-│   Dataset files used for training
-│
 ├── GeneratedLabelledFlows/
-│   Processed network flow data
-│
 └── README.md
 ```
-
+ 
 ---
-
-# Installation & Setup
-
-## Prerequisites
-
-* Python 3.8+
-* Node.js
-* npm
-
----
-
-# Backend Setup
-
-Navigate to the backend folder
-
-```
+ 
+## Installation & Setup
+ 
+### Prerequisites
+- Python 3.8+
+- Node.js 18+
+- npm
+- Anthropic API key (free tier works for demo)
+### Backend Setup
+ 
+```bash
 cd backend
-```
-
-Create a virtual environment (optional)
-
-```
 python -m venv venv
-```
-
-Activate environment
-
-```
+ 
+# Windows
 venv\Scripts\activate
-```
-
-Install dependencies
-
-```
+ 
+# Mac/Linux
+source venv/bin/activate
+ 
 pip install -r requirements.txt
 ```
-
-Run the server
-
+ 
+Set your API key:
+```bash
+# Windows
+set ANTHROPIC_API_KEY=your_key_here
+ 
+# Mac/Linux
+export ANTHROPIC_API_KEY=your_key_here
 ```
+ 
+Run the server:
+```bash
 python main.py
 ```
-
-Backend will run on:
-
-```
-http://localhost:5000
-```
-
----
-
-# Frontend Setup
-
-Navigate to frontend
-
-```
+Backend runs on: `http://localhost:5000`
+ 
+### Frontend Setup
+ 
+```bash
 cd frontend
-```
-
-Install dependencies
-
-```
 npm install
-```
-
-Run the development server
-
-```
 npm run dev
 ```
-
-Frontend will run on:
-
+Frontend runs on: `http://localhost:5173`
+ 
+### Run the Attack Simulator (separate terminal)
+ 
+```bash
+cd backend
+python simulator/attack_simulator.py --type DDoS --rate 5
 ```
-http://localhost:5173
+ 
+---
+ 
+## API Endpoints
+ 
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/predict` | Classify network traffic flow |
+| POST | `/analyze` | Full analysis: SHAP + LLM + MITRE + Severity |
+| GET | `/stats` | Aggregate attack statistics |
+| GET | `/alerts` | Recent alert history |
+| POST | `/simulate` | Trigger attack simulation |
+ 
+### Sample `/analyze` Response
+ 
+```json
+{
+  "prediction": "DDoS",
+  "confidence": 0.94,
+  "severity": "CRITICAL",
+  "shap_features": [
+    { "feature": "Packet Rate", "contribution": 0.42 },
+    { "feature": "Flow Duration", "contribution": 0.28 },
+    { "feature": "Protocol", "contribution": 0.18 }
+  ],
+  "mitre": {
+    "technique_id": "T1498",
+    "technique_name": "Network Denial of Service",
+    "tactic": "Impact"
+  },
+  "llm_report": "This traffic pattern is consistent with a volumetric DDoS attack targeting network bandwidth. The extremely high packet rate (42% contribution) combined with short flow durations indicates a SYN flood attempt. Recommended actions: implement rate limiting on the affected interface, block the source IP range, and alert the SOC team immediately.",
+  "recommended_action": "Block source IP + Rate limit endpoint"
+}
 ```
-
+ 
 ---
-
-# Usage
-
-Once both backend and frontend are running:
-
-1. Open the dashboard in your browser.
-2. The frontend connects to the backend API.
-3. Network traffic data is analyzed using the ML models.
-4. Detected attacks and statistics are displayed in real time.
-
+ 
+## Models Used
+ 
+### Random Forest (Classification)
+Trained on CICIDS2017 to classify traffic into:
+- Benign
+- DDoS
+- PortScan
+- Bot
+- Brute Force
+- Web Attack
+### Isolation Forest (Anomaly Detection)
+Detects zero-day / unknown attack patterns as anomalies, even if not in the training set.
+ 
+### SHAP (Explainability)
+TreeExplainer applied to Random Forest predictions — generates per-prediction feature contribution scores for transparent, auditable decisions.
+ 
 ---
-
-# Future Improvements
-
-Possible improvements include:
-
-* Integration with real packet capture tools
-* Deep learning models for sequential traffic analysis
-* Distributed deployment for enterprise networks
-* Enhanced authentication and security for the dashboard
-
+ 
+## Live Demo Flow
+ 
+1. Open dashboard at `http://localhost:5173`
+2. Click **"Launch DDoS Simulation"** in the Simulator panel
+3. Watch alerts populate in real time on the feed
+4. Click any alert to see:
+   - SHAP feature chart (why it was flagged)
+   - MITRE ATT&CK technique badge
+   - Severity level (CRITICAL)
+   - LLM-generated threat report with recommended action
 ---
-
-# License
-
-This project is developed for educational and research purposes.
+ 
+## Future Improvements
+ 
+- Integration with Zeek / Suricata for real packet capture
+- Deep learning (LSTM) for sequential traffic pattern analysis
+- Federated learning for privacy-preserving multi-node deployment
+- Automated firewall rule generation via response actions
+- Role-based dashboard with analyst / admin views
+---
+ 
+## Dataset
+ 
+CICIDS2017 — Canadian Institute for Cybersecurity  
+Contains realistic network traffic with benign and attack scenarios including DoS, DDoS, Brute Force, XSS, SQL Injection, Infiltration, and Botnet traffic.
+ 
+---
+ 
+## License
+ 
+Developed for academic and research purposes.
+ 
+---
+---
+---
+ 
+# ANTIGRAVITY BUILD GUIDE
+## Step-by-Step Prompts + Commands to Build A.I.R.S
+ 
+---
+ 
+## HOW TO USE THIS GUIDE
+ 
+Run each prompt **in order** in AntiGravity. Each prompt builds on the last.  
+After each AntiGravity generation, run the **verification command** before moving to the next prompt.  
+Do NOT skip steps — later prompts reference files created in earlier ones.
+ 
+---
