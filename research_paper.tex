@@ -68,9 +68,9 @@ The primary contributions of this paper include:
     \item \textbf{Deployment Limitations Framework:} Acknowledging explicitly the operational discrepancies linking raw socket integrations in continuous daemon tracking versus batch CICIDS2017 flow-level feature extraction dependencies.
 \end{enumerate}
 
-The structure of the paper is outlined as follows: Section II analyzes associated literature. Section III dictates the Threat Model and base Dataset. Section IV describes mathematical Preprocessing requirements. Section V dissects the Proposed Hybrid Methodology. Section VI exposes System Implementation parameters. Section VII addresses Experimental Validation. Finally, Sections VIII and IX deliver limitations and conclusions.
+The structure of the paper is outlined as follows: Section II provides a Literature Review. Section III details the Methodology, including the dataset, preprocessing steps, and architectural framework. Section IV presents the Results and Analysis alongside associated limitations. Finally, Section V delivers the Conclusion.
 
-\section{Related Work}
+\section{Literature Review}
 \subsection{Intrusion Detection Datasets (CICIDS2017)}
 Traditional validation was historically performed over the DARPA KDD Cup 99 and subsequently NSL-KDD benchmarks. While foundational, modern traffic flows render them fundamentally obsolete. The CICIDS2017 dataset, structured effectively utilizing the CICFlowMeter pipeline, provides modernized heterogeneous attacks embedded transparently against realistic global communication behaviors \cite{sharafaldin2018toward}. Its complex representation of DoS schemas, Web Attacks, and stealthy infiltration campaigns positions it as the standardized benchmark mapping contemporary NIDS capabilities. 
 
@@ -86,7 +86,7 @@ Traffic attacks rarely occur singularly; instead, they operate as sustained stru
 \subsection{Concept Drift Tracking}
 Standard deployment paradigms incorrectly assume the network distribution remains theoretically stationary. Over months, application traffic evolves natively, heavily degrading classical detection reliability (Concept Drift). Advanced integrations deploy monitoring mechanics, assessing Kullback-Leibler (KL) divergences or Population Stability Index (PSI) coefficients to track topological shifts bridging static baseline training distributions against streaming production volumes, ensuring continuous statistical alignment \cite{psi_concept_drift}.
 
-\section{Dataset and Threat Modeling}
+\section{Methodology}
 \subsection{The CICIDS2017 Topology}
 Functionally mapping multi-staged AI processes mandates the CICIDS2017 dataset integration. Extracting features leveraging independent IP/TCP/UDP properties allows highly granular flow inspection covering 70+ properties encompassing temporal durations, byte rates, packet accumulations, flag triggers (SYN, FIN, PSH), and interval variances.
 
@@ -119,13 +119,13 @@ Our architecture proposes network-level analytics strictly assessing metadata ex
 2) Substantial architectural modifications (Zero-Day vulnerabilities) disrupt standardized communication layouts sufficiently to elevate MSE bounds inside constrained Deep Autoencoders. 
 3) Continuous distributed payload injections mathematically alert the sequential LSTM parameters.
 
-\section{Feature Engineering and Preprocessing}
+\subsection{Feature Engineering and Preprocessing}
 Robust AI interactions collapse rapidly if inconsistent engineering manipulates incoming network pipelines. Stringent standardization dictates all data traversals.
 
-\subsection{Mathematical Cleaning and Winsorization}
+\subsubsection{Mathematical Cleaning and Winsorization}
 Direct translations of the CICFlowMeter operations result natively in multiple infinite properties specifically triggered around time-based properties (bytes-per-second ratios encountering near-zero flow durations). We mathematically substitute \texttt{inf} variables utilizing missing categorizations structurally. The implemented pipeline filters heavy tails leveraging global Winsorization architectures, clipping extreme statistical outliers natively bounding representations heavily across the $1^{\text{st}}$ and $99^{\text{th}}$ percentiles uniformly. This action anchors statistical variances aggressively without deleting distinct intrusion profiles.
 
-\subsection{Dynamic Feature Selection}
+\subsubsection{Dynamic Feature Selection}
 High dimensionality dilutes model generalization. We apply intensive 3-tier selective methodologies:
 \begin{enumerate}
     \item \textbf{Variance Limiting:} Stripping categorical elements demonstrating minimum standard scale movement bounds under 0.01 thresholds.
@@ -133,14 +133,14 @@ High dimensionality dilutes model generalization. We apply intensive 3-tier sele
     \item \textbf{Boosting Extractors:} Operating primary Tree-based gradient structures extracting the Top-40 defining metadata features strictly.
 \end{enumerate}
 
-\subsection{Scaling Regiments (RobustScaler)}
+\subsubsection{Scaling Regiments (RobustScaler)}
 Standard Z-Score normalization fails aggressively navigating extreme non-normal traffic variances. Our architecture demands the Scikit-Learn \texttt{RobustScaler} implementation transforming variables $X$ uniformly anchoring boundaries over internal Interquartile Ranges (IQR).
 \begin{equation}
     x_{scaled} = \frac{x - P_{50}(X)}{P_{75}(X) - P_{25}(X)}
 \end{equation}
 The computed constraints are specifically serialized to localized `.joblib` entities binding test-time execution identically.
 
-\section{Hybrid Methodology Design}
+\subsection{Hybrid Architecture Design}
 
 \begin{figure}[!t]
 \centering
@@ -188,10 +188,10 @@ The computed constraints are specifically serialized to localized `.joblib` enti
 \vspace{-0.5em}
 \end{figure}
 
-\subsection{Supervised Vector Classification}
+\subsubsection{Supervised Vector Classification}
 The structural core relies on Scikit-Learn's Random Forest classifier acting natively against the targeted CICIDS features. Bootstrapping samples independently against randomized branch restrictions enables powerful structural correlations bridging extreme precision levels directly limiting false positives across well-categorized threats. Utilizing continuous node optimization, class imbalance adjustments regulate minor variables organically stopping major DDoS vectors from overpowering minor BruteForce events inside logic bounds.
 
-\subsection{Autoencoder Reconstruction Module}
+\subsubsection{Autoencoder Reconstruction Module}
 Bridging deep parameters, the PyTorch implementation isolates normal vectors and maps complex nonlinear properties mathematically compressing limits exclusively scaling properties across the structural pipeline:
 \[
     {d_{\text{features}}} \rightarrow 64 \rightarrow 32 \rightarrow 16 \rightarrow 32 \rightarrow 64 \rightarrow {d_{\text{features}}}
@@ -202,33 +202,33 @@ Leveraging dropout limits minimizing overfitting gradients, the network calculat
 \end{equation}
 Extreme outlier calculations indicate the $95^{th}$ validation percentile forming the rigid boundaries denoting critical baseline breaks representing immediate zero-day triggers.
 
-\subsection{Temporal LSTM Sequence Engine}
+\subsubsection{Temporal LSTM Sequence Engine}
 Single flows miss dynamic scanning events. The continuous PyTorch integration builds localized matrix limits representing preceding metadata $x$:
 \begin{equation}
     \mathbf{X}_{seq} = [x_{t-9}, x_{t-8}, \dots, x_t]
 \end{equation}
 The engine tracks independent flows navigating heavy LSTM(64) boundaries generating Sigmoid regressions indicating immediate temporal density anomalies scoring natively $P_{\text{lstm}} \in [0,1]$. 
 
-\subsection{PSI Concept Drift Mechanics}
+\subsubsection{PSI Concept Drift Mechanics}
 Network topology continuously mutates. Validated environments measure population boundaries continuously tracking Expected bins ($E_i$) isolated during training phases against streaming Operational ranges ($A_i$).
 \begin{equation}
     \text{PSI} = \sum_{i} \left( A_i - E_i \right) \times \ln\left(\frac{A_i}{E_i}\right)
 \end{equation}
 As $PSI_{avg}$ crosses boundaries signifying drift conditions, inference controllers actively scale evaluation probabilities dynamically throttling false warnings proactively adjusting threshold parameters directly via $\tau = f(\text{PSI})$.
 
-\subsection{Threat Intelligence Ingestion}
+\subsubsection{Threat Intelligence Ingestion}
 Ancillary verifications ingest rapid Blocklist implementations evaluating targeting domains spanning internal external validations parsing localized routing parameters (IP-API) denoting autonomous systems (ASN) effectively escalating confidence levels naturally generating prioritized alerts dynamically updating the inference rules.
 
-\subsection{Synchronous Weighted Ensemble Logic}
+\subsubsection{Synchronous Weighted Ensemble Logic}
 Consolidating intelligence requires decision-level scaling establishing universal scoring boundaries:
 \begin{equation}
     S_t = w_1 P_{rf}(x_t) + w_2 A_{ae}(x_t) + w_3 P_{lstm}(x_{t-9:t}) + w_4 A_{iso}(x_t)
 \end{equation}
 Scaling rules actively bypass threshold loops generating exact identification variables logging analytical confidence variables straight for SOC ingestion natively.
 
-\section{System Architecture and Implementation}
+\subsection{System Architecture and Implementation}
 
-\subsection{FastAPI Network Operations}
+\subsubsection{FastAPI Network Operations}
 Deploying statistical intelligence requires absolute latency efficiency. The engine utilizes FastAPI leveraging \texttt{async} endpoints traversing multiple loops actively validating traffic arrays locally across independent thread constraints preventing asynchronous blocking. Active SQLite persistence is engineered leveraging \texttt{aiosqlite} assuring scalable analytical inserts tracking anomaly data seamlessly. 
 
 \begin{table}[htbp]
@@ -256,13 +256,13 @@ Deploying statistical intelligence requires absolute latency efficiency. The eng
 \vspace{-0.5em}
 \end{table}
 
-\subsection{Real-time Dashboards via React}
+\subsubsection{Real-time Dashboards via React}
 Translating intelligence endpoints mandates robust visualizations. A modern structural framework built on React and localized Vite bundles queries websocket APIs (\texttt{ws://localhost:8000}) directly reflecting real-time intrusion sequences tracking continuous charts mapping Drift Metrics actively indicating global network health independently exposing active Blocklist events natively.
 
-\subsection{Continuous Packet Sniffing (Scapy)}
+\subsubsection{Continuous Packet Sniffing (Scapy)}
 End-to-End operations deploy parallel processing threads generating raw PCAP aggregations actively. Using Scapy interfaces natively tracking TCP alignments simulating active deployments validating API inferences immediately logging live structural events across localized endpoints.
 
-\section{Experimental Analytics and Validation}
+\section{Results and Analysis}
 
 \subsection{Standardized Metrics}
 Quantitative success strictly requires mapping Accuracy against False Discovery limits referencing base parameters: 
@@ -273,6 +273,20 @@ Precision effectively tracks the realistic alert value against total system clai
 
 \subsection{Baseline Operational Inference}
 Operating the Random Forest component over isolated partitions highlights unmatched baseline identification mechanics validating supervised structures immediately analyzing general DoS triggers organically exceeding 98\% accuracy bounds independently. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.48\textwidth]{results/roc_curve.png}
+    \caption{ROC curve distinguishing the standalone Random Forest against the enhanced Hybrid Ensemble identifying structural improvements across minor threat classes.}
+    \label{fig:roc}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.48\textwidth]{results/confusion_matrix.png}
+    \caption{Confusion Matrix outlining precision constraints and minimized False Positive leakage inside the Hybrid Pipeline evaluation.}
+    \label{fig:cm}
+\end{figure}
 
 \begin{table}[htbp]
 \caption{ML Component Performance Isolation}
@@ -298,14 +312,13 @@ The Hybrid Engine leverages localized elements directly raising universal Recall
 \subsection{PSI Integration Impact Evaluation}
 Simulating active concept drift natively introducing 1000 randomized unaligned normal baseline structures organically triggered an immediate $241\%$ increase in Isolated alerts dynamically bypassing regular ML components. Engaging the autonomous PSI loop measured metric distribution shifts exceeding $0.35$ boundaries heavily scaling basic validation properties eliminating 96\% of localized False Positives completely autonomously guaranteeing resilience across expanding architectural landscapes effectively.
 
-\section{Discussion and Associated Limitations}
-
+\subsection{Discussion and Associated Limitations}
 Deployment reality differs immensely from strict dataset validation. 
 \textbf{Feature Extraction Realities:} Producing continuous properties matching CICIDS limits utilizing standard sniffers lacks rigorous flow-aggregation consistency producing minimal variations linking deployment inputs negatively bridging standardized artifacts inherently demanding identical flow generators (NFstream/CICFlowMeter).
 \textbf{Hardware Restraints:} Real-time LSTMs leverage heavy CPU scaling loops restricting overall Gbps ingestion naturally mandating targeted GPU CUDA scaling clusters traversing complex production loops accurately. 
 \textbf{Time Constraints and Zero-Day Confirmations:} The bounds evaluated map theoretically unassociated anomalies effectively mimicking zero-day exploits, yet definitive validation mandates robust hold-out verifications hiding independent attack classes actively bypassing evaluation bias natively.
 
-\section{Conclusion and Future Work}
+\section{Conclusion}
 Our developed framework introduces a complex architectural hybridization bridging reliable ML classifications (RF) concurrently spanning resilient autonomous parameters tracking anomalous (Deep Autoencoders) and sequence-based anomalies (LSTMs). Connecting this theoretical ensemble across an asynchronous FastAPI framework integrating autonomous PSI drift throttling bounds entirely guarantees an active counter to historical network deployment failures tracking robust SOC integrations heavily across visualized frameworks natively addressing modern cyber paradigms efficiently. Future implementations will transition flow extraction mechanics targeting raw Kafka pipelining capabilities dynamically interacting aggressively building active automated SOAR rules protecting firewall integrity autonomously.
 
 \begin{thebibliography}{00}
