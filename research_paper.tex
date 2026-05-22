@@ -51,7 +51,7 @@ Network Intrusion Detection, Concept Drift, Autoencoder, LSTM, Ensemble Learning
 \end{IEEEkeywords}
 
 \section{Introduction}
-Modern networking infrastructure forms the backbone of global operations, facilitating communications across distributed IoT devices, cloud workloads, remote-worker connections, and critical microservices. As the volume and diversity of legitimate structural traffic exponentially increase, malicious entities continually innovate, employing sophisticated polymorphic payloads, stealthy distributed denial of service (DDoS) frameworks, automated infiltration scripts, and adversarial evasion techniques to bypass standardized perimeter protections. Conventionally, Intrusion Detection Systems (IDS)—such as Snort and Suricata—have heavily governed these boundaries relying inherently on manually prescribed heuristic signatures. While incredibly efficient at mitigating previously mapped threats, signature architectures suffer from foundational rigidity; they intrinsically overlook zero-day deviations lacking predefined catalog sequences \cite{khraisat2019survey}.
+Modern networking infrastructure forms the backbone of global operations, facilitating communications across distributed IoT devices, cloud workloads, remote-worker connections, and critical microservices. As the volume and diversity of legitimate structural traffic exponentially increase, malicious entities continually innovate, employing sophisticated polymorphic payloads, stealthy distributed denial of service (DDoS) frameworks, automated infiltration scripts, and adversarial evasion techniques to bypass standardized perimeter protections. Conventionally, Intrusion Detection Systems (IDS)—such as Snort and Suricata—have heavily governed these boundaries relying inherently on manually prescribed heuristic signatures. While incredibly efficient at mitigating previously mapped threats, signature architectures suffer from foundational rigidity; they intrinsically overlook zero-day deviations lacking predefined catalog sequences \cite{khraisat2019survey, buczak2016}.
 
 Implementing Artificial Intelligence (AI) and Machine Learning (ML) directly addresses signature rigidity by learning statistically discriminative boundaries directly from extracted flow features. Supervised classical algorithms including Random Forests (RF), Support Vector Machines (SVM), and Extreme Gradient Boosting (XGBoost) successfully map network metadata into robust decision surfaces. Despite substantial benchmark accuracy, supervised architectures introduce vulnerabilities reliant entirely upon label distributions: if a novel threat significantly shifts from the training distribution, traditional classifiers assign catastrophic confidence values to malicious events \cite{ahmad2021survey}.
 
@@ -78,7 +78,7 @@ Traditional validation was historically performed over the DARPA KDD Cup 99 and 
 Tree-based aggregations regularly dictate supervised tabular research. The Random Forest architecture iteratively reduces predictive variance by deploying parallelized decision trees against randomized bootstrap aggregations \cite{breiman2001random}. XGBoost concurrently maximizes gradient mappings, incorporating heavy penalty scaling to control branch complexity. Across CICIDS2017 schemas, ensemble tree classifiers heavily outweigh Neural Networks mapping pure parametric regressions, establishing the baseline requirement utilized within this integration \cite{chen2016xgboost}.
 
 \subsection{Deep Learning and Unsupervised Reconstructions}
-To solve zero-day vulnerabilities lacking supervised labels, the Autoencoder paradigm targets strict mathematical representations of normative sequences. The Kitsune network specifically deployed ensembles of localized autoencoders targeting raw network packets directly, extracting reconstruction deltas sequentially \cite{mirsky2018kitsune}. This research validates the operational capability to bypass labeling restrictions by restricting deep-layer optimizations purely against healthy communication protocols, assuming malicious actions induce non-conforming structural paths natively.
+To solve zero-day vulnerabilities lacking supervised labels, the Autoencoder paradigm targets strict mathematical representations of normative sequences. The Kitsune network specifically deployed ensembles of localized autoencoders targeting raw network packets directly, extracting reconstruction deltas sequentially \cite{mirsky2018kitsune}. This research validates the operational capability to bypass labeling restrictions by restricting deep-layer optimizations purely against healthy communication protocols, assuming malicious actions induce non-conforming structural paths natively. Furthermore, recent comparative studies \cite{ferrag2020, gamage2020} emphasize that while deep learning consistently excels in mapping high-dimensional non-linear attack boundaries, standard benchmark evaluations strictly require hybridized environments to fully address adversarial evasion and modern encryption realities.
 
 \subsection{Temporal Sequence Models}
 Traffic attacks rarely occur singularly; instead, they operate as sustained structural bursts. LSTMs theoretically solve the vanishing gradient paradox affecting generalized Recurrent Neural Networks, authorizing sustained short-term memory dependencies referencing moving statistical sequences \cite{hochreiter1997lstm}. Adapting LSTM architectures to networking requires capturing adjacent temporal buffers, allowing the recognition of progressive scanning algorithms frequently bypassed by static one-shot flow analyzers \cite{nids_lstm}.
@@ -144,6 +144,7 @@ The computed constraints are specifically serialized to localized `.joblib` enti
 
 \begin{figure}[!t]
 \centering
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[node distance=1.1cm, font=\scriptsize]
 \tikzstyle{box} = [rectangle, rounded corners, minimum width=2.0cm,
     minimum height=0.7cm, text centered, draw=black, fill=blue!10]
@@ -182,7 +183,8 @@ The computed constraints are specifically serialized to localized `.joblib` enti
 \draw [arrow] (intel) -- (ensemble);
 \draw [arrow] (ensemble) -- (terminal);
 
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Intrusion Decision Logic Pipeline spanning Data ingestion to AI Fusion via asynchronous Threat integrations.}
 \label{fig:hybrid_arch}
 \vspace{-0.5em}
@@ -349,6 +351,15 @@ R. Vinayakumar, M. Alazab, K. P. Soman, P. Poornachandran, A. Al-Nemari, and S. 
 
 \bibitem{psi_concept_drift}
 S. Lu, A. Liu, J. Dong, and B. C. M. Fung, ``Concept drift detection and adaptation in non-stationary environments,'' \textit{Future Generation Computer Systems}, vol. 30, pp. 109-122, 2018.
+
+\bibitem{ferrag2020}
+M. A. Ferrag, L. Maglaras, S. Moschoyiannis, and H. Janicke, ``Deep learning for cyber security intrusion detection: Approaches, datasets, and comparative study,'' \textit{Journal of Information Security and Applications}, vol. 50, p. 102419, 2020.
+
+\bibitem{gamage2020}
+S. Gamage and J. Samarabandu, ``Deep learning methods in network intrusion detection: A survey and objective comparison,'' \textit{Journal of Network and Computer Applications}, vol. 169, p. 102767, 2020.
+
+\bibitem{buczak2016}
+A. L. Buczak and E. Guven, ``A survey of data mining and machine learning methods for cyber security intrusion detection,'' \textit{IEEE Communications Surveys \& Tutorials}, vol. 18, no. 2, pp. 1153-1176, 2016.
 
 \end{thebibliography}
 
