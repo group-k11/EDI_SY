@@ -23,19 +23,38 @@ build/
 *.swp
 *.swo
 
-# Database
-backend/*.db
-backend/ids_database.db
+# Database files (regenerated on startup)
+*.db
+*.sqlite
+*.sqlite3
 
-# ML models
+# ML models — all formats (regenerated on startup)
 backend/models/*.joblib
+backend/models/*.pth
+backend/models/*.h5
+backend/saved_models/
+
+# Deep learning model files
+*.h5
+*.pth
 
 # Datasets
 *.zip
 *.csv
+*.parquet
 GeneratedLabelledFlows.zip
 MachineLearningCSV.zip
+
+# Generated plots / research artifacts
+results/
+*.png
+*.pdf
 
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Python cache at all levels
+**/__pycache__/
+*.pyc
+*.pyo

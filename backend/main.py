@@ -1,6 +1,7 @@
 """
-Main Entry Point — FastAPI application with background processing loops.
-Starts packet capture, flow analysis, and threat detection pipelines.
+Main Entry Point — A.I.R.S FastAPI application.
+Starts packet capture, flow analysis, threat detection, SHAP,
+LLM analyst, MITRE mapping, severity scoring, and response engine.
 """
 
 import asyncio
@@ -156,11 +157,25 @@ async def intel_refresh_loop():
         await asyncio.sleep(60 * 30)
 
 
+async def response_expiry_loop():
+    """Expire old IP blocks and rate limits every 5 minutes."""
+    from response_engine.blocker import expire_old_blocks
+    while _running:
+        try:
+            removed = expire_old_blocks()
+            if removed > 0:
+                print(f"[+] Response engine: expired {removed} old block/rate-limit entries.")
+        except Exception as e:
+            print(f"[!] Response expiry error: {e}")
+        await asyncio.sleep(300)  # every 5 minutes
+
+
 # ─── App Lifecycle ─────────────────────────────────────────────────
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown lifecycle."""
+    global _running
     # Startup
     await init_db()
     print("[+] Database initialized.")
@@ -182,32 +197,38 @@ async def lifespan(app: FastAPI):
         print("[!] Live capture unavailable — using simulator for demo.")
 
     # Start background tasks
-    global _running
     _running = True
     task1 = asyncio.create_task(processing_loop())
     task2 = asyncio.create_task(auto_simulation_loop())
     task3 = asyncio.create_task(intel_refresh_loop())
+    task4 = asyncio.create_task(response_expiry_loop())
     print("[+] Background processing started.")
-    print("[+] System is operational — dashboard at http://localhost:8000")
+    print("[+] Response engine active — auto-blocking enabled.")
+    print("[+] A.I.R.S operational — dashboard at http://localhost:8000")
+    print("[+] New endpoints: /api/analyze | /api/blocked | /api/impact | /api/explain")
 
     yield
 
     # Shutdown
-    global _running
     _running = False
     packet_capture.stop()
     task1.cancel()
     task2.cancel()
     task3.cancel()
-    print("[*] System shutdown complete.")
+    task4.cancel()
+    print("[*] A.I.R.S shutdown complete.")
 
 
 # ─── FastAPI App ───────────────────────────────────────────────────
 
 app = FastAPI(
-    title="AI-Driven Network Intrusion Detection System",
-    description="Real-time network traffic monitoring, ML-based intrusion detection, and cybersecurity dashboard.",
-    version="1.0.0",
+    title="A.I.R.S — Autonomous Intelligent Response System",
+    description=(
+        "AI-Based Network Intrusion Detection with SHAP Explainability, "
+        "LLM Threat Analysis, MITRE ATT&CK Mapping, Active IP Blocking, "
+        "and Real-Time Pipeline Visualization."
+    ),
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -228,17 +249,22 @@ app.include_router(router)
 @app.get("/")
 async def root():
     return {
-        "name": "AI-Driven Network Intrusion Detection System",
+        "name": "A.I.R.S — Autonomous Intelligent Response System",
         "status": "operational",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "endpoints": {
-            "traffic": "/api/traffic",
-            "threats": "/api/threats",
-            "logs": "/api/logs",
-            "network_map": "/api/network-map",
-            "system_status": "/api/system-status",
-            "websocket": "/api/ws",
-            "docs": "/docs",
+            "analyze":      "/api/analyze      (POST) — full 9-step AI pipeline",
+            "explain":      "/api/explain       (POST) — SHAP feature explanation",
+            "blocked":      "/api/blocked       (GET)  — active IP blocklist",
+            "impact":       "/api/impact        (GET)  — real-world impact stats",
+            "simulate":     "/api/simulate      (POST) — start attack simulator",
+            "traffic":      "/api/traffic",
+            "threats":      "/api/threats",
+            "logs":         "/api/logs",
+            "network_map":  "/api/network-map",
+            "system_status":"/api/system-status",
+            "websocket":    "/api/ws",
+            "docs":         "/docs",
         },
     }
 
