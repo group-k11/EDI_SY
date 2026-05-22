@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Node.js
+node_modules/
+dist/
+build/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database
+backend/*.db
+backend/ids_database.db
+
+# ML models
+backend/models/*.joblib
+
+# Datasets
+*.zip
+*.csv
+GeneratedLabelledFlows.zip
+MachineLearningCSV.zip
+
+# OS generated files
+.DS_Store
+Thumbs.db
