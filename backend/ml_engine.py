@@ -11,8 +11,17 @@ from sklearn.ensemble import IsolationForest, RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from typing import Dict, List, Tuple, Optional
 from collections import defaultdict
-import torch
-from dl_models import ThreatAutoencoder, TrafficLSTM, DEVICE
+try:
+    import torch
+    from dl_models import ThreatAutoencoder, TrafficLSTM, DEVICE
+    TORCH_AVAILABLE = True
+except ImportError:
+    torch = None
+    ThreatAutoencoder = None
+    TrafficLSTM = None
+    DEVICE = "cpu"
+    TORCH_AVAILABLE = False
+
 
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "models")
